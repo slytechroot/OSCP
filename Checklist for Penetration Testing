@@ -1,0 +1,24 @@
+- BEFORE BEGINNING:
+- update exploits DB
+- cd /pentest/exploits/exploitdb/
+- svn update
+- msfupdate
+- set up services to download tools in the victims
+- TFTP: atftpd --daemon --port 69 /var/tmp/tftphome
+- FTP: /etc/init.d/pure-ftpd start
+- SSH(scp): /etc/init.d/ssh start
+- HTTP: /etc/init.d/apache2 start
+- copy useful tools to the services folders (/var/tmp/tftphome, /var/tmp/ftphome, /var/www)
+- sbd.exe
+- nc.exe
+- tftpd32.exe
+- wget.exe
+- whoami.exe
+- trojan_meterpreter.exe
+- (others...)
+- set console history to unlimited (Config->History->Set Unlimited)
+- discover alive machines
+- nmap -sn -n -oG IP_alive_nmap.txt <Net-CIDR>
+- cat IP_alive_nmap.txt |grep "Status: Up" |cut -d" " -f2 >IPs_alive_nmap.txt
+- discover machines that possibly exist
+- DNS discover

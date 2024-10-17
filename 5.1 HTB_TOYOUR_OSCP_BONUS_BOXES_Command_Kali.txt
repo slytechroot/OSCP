@@ -1,0 +1,29 @@
+How To Hack The Box To Your OSCP (The Bonus Boxes)
+================================
+Forwarding Commando through Kali
+--------------------------------
+
+# Make sure Kali is bridged in VMWare Workstation
+sudo sysctl -a
+sudo sysctl -a | grep ip_for
+
+# sudo echo 1 > /proc/sys/net/ipv4/ip_forward
+# Run ip a to get your network adapter IP
+ip a 
+
+# configure the Kali firewall to translate your source IP out 
+sudo iptables -A FORWARD -i tun0 -o eth0 -m state --state RELATED,ESTABLISHED -j ACCEPT
+sudo iptables -A FORWARD -i eth0 -o tun0 -j ACCEPT  
+sudo iptables -t nat -A POSTROUTING -s 192.168.1.0/24 -o tun0 -j MASQUERADE  
+
+# Make sure your Commando VM is bridged in VMWare Workstatoin too :)
+
+# Open an elevated prompt
+Ctrl + Shift + Enter
+
+route print
+route add 10.10.0.0 mask 255.255.0.0 <your Kali bridged IP, probably 192.168.x.x>
+
+ping 10.10.10.2
+ping 10.10.11.168
+

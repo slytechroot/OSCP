@@ -1,0 +1,43 @@
+How To Hack The Box To Your OSCP (The Bonus Boxes)
+================================
+Recon
+--------------------------------
+
+# MITRE ATT&CK T1592.004: Recon, Gather Victim Host Informatoin: Client Configurations
+
+sudo ping -c 1 10.10.11.168
+# TTL shows it's Windows, Let's run RustScan to identify open ports
+
+# MITRE ATT&CK T1595: Recon, Active Scanning
+rustscan -h
+rustscan --addresses 10.10.11.168 --range 0-65535 --ulimit 5000 -- -sC -sV
+rustscan --timeout 1500 10.10.11.168 -- -vvv -sC -sV -oN scrambled.rustscan
+
+
+# MITRE ATT&CK T1592.002: Recon, Gather Victim Host Information: Software
+sudo whatweb 10.10.11.168
+
+# We can open Burp Community and browse here in the Burp Browser
+http://scrm.local
+
+# Check Wappalyzer
+
+# View source, browse page
+# IT Services, NTLM disabled - ok
+
+smbclient -L //dc1.scrm.local
+# Notice that doesn't give us login failure it says not supported because NTLM is disabled.
+
+# Let's feroxbuster in the background while we explore
+# MITRE ATT&CK T1595.003: Recon, Active Scanning: Wordlist Scanning
+sudo feroxbuster --url http://scrm.local/ --random-agent --auto-tune --collect-backups --collect-words --output scrambled.ferox
+
+sudo vim users.lst
+support, ksimpson, VbScrub
+# MITRE ATT&CK T1589.003: Recon, Gather Victim Identity Information: Employee Names
+sudo wget http://scrm.local/images/orders2.png
+sudo exiftool orders2.png
+
+# MITRE ATT&CK T1589.001: Recon, Gather Victim Identity Information: Credentials
+#Password resets says passwords for accounts are reset to the same as the username!
+# and we already ahve a few usernames so are they valid? let's test!

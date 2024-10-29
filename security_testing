@@ -58,6 +58,15 @@ nxc smb 192.168.56.10 -u service-accts.txt -p Password123!
 SMB vs Kerberos Spraying:
 Kerberos - fast, UDP, no TCP overhead, less noise - only 2 frames to check password, failed kerberos pre-authentication does not trigger a Logon failure event (4625), need to manually configure DC for kerbes login event logging (event 4771: Kerberos pre-authentication)
 
+nxc smb 192.168.56.10 -u service-accts.txt -p Password123! -d child.child.ad
+Wireshark filters: 
+ip.addr==192.168.50.20 && ip.addr==192.168.56.11
+ip.addr==192.168.50.20 && ip.addr==192.168.56.11 && smb || smb2
+
+
+
+
+
 
 
 

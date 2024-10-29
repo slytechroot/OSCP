@@ -1,0 +1,70 @@
+[InternetShortcut]
+URL=https://github.com/SpecterOps/BloodHound
+
+[InternetShortcut]
+URL=https://github.com/ShutdownRepo/targetedKerberoast
+
+[InternetShortcut]
+URL=https://github.com/r3motecontrol/Ghostpack-CompiledBinaries?tab=readme-ov-file
+
+[InternetShortcut]
+URL=https://docs.rs/rusthound/latest/rusthound/
+
+[InternetShortcut]
+URL=https://github.com/m8sec/CrossLinked
+
+[InternetShortcut]
+URL=https://raw.githubusercontent.com/q0phi80/CybersecurityTools/refs/heads/master/service-accts.txt
+
+[InternetShortcut]
+URL=https://www.digitalocean.com/community/tutorials/understanding-the-ldap-protocol-data-hierarchy-and-entry-components?formCode=MG0AV3
+
+[InternetShortcut]
+URL=https://www.netexec.wiki/
+
+nmap -v --open -p 389,636,3269 192.168.56.10/24 -oA ldap-servers
+
+cat ldap-servers.nmap | grep "Nmap scan report" | cut -d "(" -f2 | cut -d ")" -f1 > ldap.servers
+
+nslookup -type=srv _ldap._tcp.dc._msdcs.client.ad 192.168.56.10
+nslookup -type=srv _ldap._tcp.dc._msdcs.client.ad 192.168.56.10
+nslookup -type=srv _ldap._tcp.dc._msdcs.client.client.ad 192.168.56.10
+nslookup -type=srv _ldap._tcp.dc._msdcs.foreign.ad 192.168.56.10
+
+nmap -vvv --open 192.168.56.0/24 -oA day1
+
+[InternetShortcut]
+URL=https://github.com/sensepost/gowitness
+
+gowitness nmap -f day1-script.xml --open --service-contains http
+
+cat day1.nmap | grep "445/open/tcp//" | cut -d " " -f2
+
+gowitness server
+(browse localhost:7171 for the gowitness server)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

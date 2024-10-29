@@ -43,6 +43,21 @@ cat day1.nmap | grep "445/open/tcp//" | cut -d " " -f2
 gowitness server
 (browse localhost:7171 for the gowitness server)
 
+Password harvesting: spraying
+- one username and several passwords:
+hydra -l user.name -P pass.list smb://192.168.56.10
+(this can lead to account lockout and it's very loud)
+
+- several usernames and one password to test with:
+nxc smb 192.168.56.10 -u service-accts.txt -p Password123!
+(high success rate)
+(rate of account lockout is much lower)
+
+- event ID 4625 - account failed to logon.
+
+SMB vs Kerberos Spraying:
+Kerberos - fast, UDP, no TCP overhead, less noise - only 2 frames to check password, failed kerberos pre-authentication does not trigger a Logon failure event (4625), need to manually configure DC for kerbes login event logging (event 4771: Kerberos pre-authentication)
+
 
 
 

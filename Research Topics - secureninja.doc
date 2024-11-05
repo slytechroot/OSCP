@@ -1,0 +1,84 @@
+ Here are some of the topics to look forward to:
+
+    Stack Overflows (in both Linux and Windows)
+    Abusing Structured Exception Handlers on Windows
+    Shellcoding Tricks (Negative jumps, egghunters, fragmented shellcode)
+    Browser Exploits
+    PDF Exploits
+    ROP Exploits
+
+###########
+Day 1: Attacking From the Outside
+
+    Attacking Hardened Web Applications
+        Advanced Methods of identifying SQLI/XSS
+    Bypassing Common Web Application Security Mechanisms
+        Client-Side Filtering
+        Alphanumeric Filtering
+        Magic Quotes
+        ASP.NET Request Validate
+    Bypassing Common Security Products
+        IDS Signature Evasion
+        Dealing with Web Application Firewalls
+
+
+Day 1’s Mission:
+Attack a mock company’s heavily protected external web applications from the outside
+
+Day 2: Bypassing Anti-Virus & HIPS
+
+    Bypassing Popular Anti-Virus
+        AVG
+        McAfee
+        Symantec
+        Windows Defender
+
+ 
+
+    Bypassing Popular HIPS
+        McAfee HIPS
+        Symantec EndPoint Protection
+        Forefront
+
+Day 2’s Mission: Bypass the most common host-based security products
+
+Day 3: DLL Injection & Process Injection
+
+ 
+
+    DLL Injection
+        Advanced Post-Exploitation
+        Data-Mining
+
+ 
+
+    Process Injection
+        Advanced Network Enumeration
+        Data-Mining 2008 Active Directory with security settings enabled
+
+
+Day 3’s Mission: Bypass Group Policy Objects, Software Restriction Policy, and HIPS
+
+Day 4: Advanced Post-Exploitation
+
+    Attacking Windows 7
+        Advanced Post-Exploitation
+        Data-Mining
+
+ 
+
+    Attacking 2008 Active Directory
+        Advanced Network Enumeration
+        Data-Mining 2008 Active Directory with security settings enabled
+
+
+Day 4’s Mission: Finding all of a company's intellectual property and stealing it
+
+Day 5: Mother of All Capture the Flags
+
+    Putting everything together in a team hacking competition   
+
+ABOUT THE INSTRUCTOR       
+
+Joe McCray
+Chief Technology Officer and Senior Cybersecurity Instructor

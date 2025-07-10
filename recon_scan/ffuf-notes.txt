@@ -1,0 +1,3 @@
+ffuf -w subdomains.txt:SUB -w payloads/senstivejs.txt:FILE -u https://SUB/FILE -H "User-Agent: Mozilla/5.0 (Windows NT 10.0; rv:78.0) Gecko/20100101 Firefox/78.0" -fs 0 -c -mc 200 -fr false -rate 10 -t 10
+
+

@@ -1,0 +1,7 @@
+fcrackzip -D -p /usr/share/wordlists/rockyou.txt -u backup.tar.bz2.zip
+(crack the password)
+
+unzip -P aaaaaa backup.tar.bz2.zip
+tar -xjf backup.tar.bz2
+
+

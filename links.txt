@@ -2,3 +2,5 @@ https://notchxor.github.io/oscp-notes/
 
 https://swisskyrepo.github.io/InternalAllTheThings/active-directory/ad-adcs-certificate-services/
 
+https://docs.google.com/spreadsheets/d/18weuz_Eeynr6sXFQ87Cd5F0slOj9Z6rt/edit?gid=487240997#gid=487240997
+
